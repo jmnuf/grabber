@@ -208,6 +208,13 @@ impl Grabber {
 	let entries = Self::read_dir(dir)?;
 	for path in entries {
 	    if path.is_dir() && self.recursive {
+		if let Some(file_name) = path.file_name() {
+		    // Ignore dot directories
+		    let file_name = format!("{}", file_name.to_string_lossy());
+		    if file_name.starts_with('.') {
+			continue;
+		    }
+		}
 		let sub_results = self.search_file_names_in_dir(search, &path.to_path_buf())?;
 		for name in sub_results.into_iter() {
 		    matches.push(name);
